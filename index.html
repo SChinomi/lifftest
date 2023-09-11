@@ -21,6 +21,7 @@
         liff.init({ liffId: "2000714390-ybY5w6Dk" })
           .then(() => {
             document.getElementById('debugInfo').innerText += ' After init';
+            document.getElementById('debugInfo').innerText += ' before liff.isInClient ';
             document.getElementById('debugInfo').innerText += ' liff.isInClient() ' + liff.isInClient();
             document.getElementById('debugInfo').innerText += ' liff.isApiAvailable(getGeoLocation) ' + liff.isApiAvailable('getGeoLocation');
 
