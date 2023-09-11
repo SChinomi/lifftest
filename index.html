@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+    <div id="debugInfo">Initializing...</div>    
+
+<script>
+      window.onerror = function (msg, url, lineNo, columnNo, error) {
+        const string = `${msg} (${url}:${lineNo}:${columnNo})`;
+        document.getElementById('debugInfo').innerText += ' Window Error: ' + string;
+        return false;
+      };
+
+      function getLocationAndSendMessage() {
+        document.getElementById('debugInfo').innerText += ' Before init';
+        document.getElementById('debugInfo').innerText += ' ' + liff.getOS();
+        
+        liff.init({ liffId: "2000714390-ybY5w6Dk" })
+          .then(() => {
+            document.getElementById('debugInfo').innerText += ' After init';
+
+            if (liff.isInClient() && liff.isApiAvailable('getGeoLocation')) {
+              liff.getGeoLocation().then((location) => {
+                const message = `緯度: ${location.latitude}, 経度: ${location.longitude}`;
+                document.getElementById('debugInfo').innerText += ' Got location: ' + message;
+
+                if (liff.isInClient()) {
+                  liff.sendMessages([{ type: 'text', text: message }])
+                    .then(() => {
+                      document.getElementById('debugInfo').innerText += ' Message sent';
+                      liff.closeWindow();
+                    })
+                    .catch((err) => {
+                      document.getElementById('debugInfo').innerText += ' Error sending message:' + err;
+                    });
+                } else {
+                  alert(message);
+                }
+              });
+            } else {
+              document.getElementById('debugInfo').innerText += ' 位置情報が取得できません';
+            }
+          })
+          .catch((err) => {
+            document.getElementById('debugInfo').innerText += ' Error during LIFF initialization: ' + err.message;
+          });
+      }
+
+      window.onload = function() {
+        getLocationAndSendMessage();
+      };
+
+    </script>
+</body>
+</html>
